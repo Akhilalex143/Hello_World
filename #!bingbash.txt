@@ -1,0 +1,12 @@
+#!/bing/bash
+
+sudo apt update
+
+sudo apt install mysql-server
+
+sudo systemctl enable mysql
+
+sudo systemctl start mysql
+
+sudo apt install phpmyadmin apache2 php php-mysql
+

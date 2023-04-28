@@ -1,0 +1,27 @@
+pipeline {
+    agent any 
+    stages {
+        stage('Build') { 
+            steps {
+                    git changelog: false, credentialsId: '393ed960-17fd-4b57-96e4-022c9e4ba2e6', poll: false, url: 'git@github.com:triologictech/Backend-bi.git'
+            }
+        }
+        stage('Execute shell') { 
+            steps {
+            
+                sh 'tar -cf ./backend.tar --exclude \\*.tar ./*'
+            }
+        }
+        stage('Deploy') { 
+            steps {
+                echo "ddeploye"
+                sshPublisher(publishers: [sshPublisherDesc(configName: 'backenddev', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''sudo tar xf /var/www/html/bi/backend.tar  -C /var/www/html/bi/
+sudo rm /var/www/html/bi/backend.tar
+sudo chmod 777 -R /var/www/html/bi/''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/bi', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '**/backend.tar')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+            }
+        }
+    }
+}
+
+
+git branch: 'any branch name', credentialsId: '393ed960-17fd-4b57-96e4-022c9e4ba2e6', url: 'git@github.com:triologictech/Backend-bi.git'

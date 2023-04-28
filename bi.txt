@@ -1,0 +1,18 @@
+stage('Downloading Code ')
+ {
+git credentialsId: '393ed960-17fd-4b57-96e4-022c9e4ba2e6', url: 'git@github.com:triologictech/Backend-bi.git'
+   
+}
+
+stage('Build Step') 
+{
+sh '''#!/bin/sh
+tar -cf ./backend.tar --exclude \\*.tar ./*'''
+}
+
+stage('Dump  Code into  Server ')
+ {
+sshPublisher(publishers: [sshPublisherDesc(configName: 'backenddev', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''sudo tar xf /var/www/html/bi/backend.tar  -C /var/www/html/bi/
+sudo rm /var/www/html/bi/backend.tar
+sudo chmod 777 -R /var/www/html/bi/''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/bi', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '**/backend.tar')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])   
+}
